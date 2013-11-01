@@ -1,5 +1,8 @@
+var serialPort = require("serialport").SerialPort
+var serialPort = new SerialPort("/dev/tty-usbserial1", {
+  baudrate: 9600
+});
 var exec = require('child_process').exec;
- 
 var play = 'osascript playMusic.scpt';
 var pause = 'osascript pauseMusic.scpt';
 var stop = 'osascript stopMusic.scpt';
@@ -18,5 +21,12 @@ execCmd = function(cmd) {
     )
 };
  
-execCmd(play);
+//execCmd(play);
 
+serialPort.on("open", function () {
+  console.log('open');
+  serialPort.on('data', function(data) {
+    console.log('data received: ' + data);
+    execCmd(data['cmd']);
+  });  
+});
